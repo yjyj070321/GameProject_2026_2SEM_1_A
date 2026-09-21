@@ -1,13 +1,19 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+public enum PlayerState
+{
+    Normal,
+    Pickup,
+}
+
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private Animator animator;
     [SerializeField] private Transform cameratransform;
 
     [Header("이동 설정")]
-    
+
     [SerializeField] private float walkSpeed = 3f;
 
     [SerializeField] private float runSpeed = 6f;
@@ -22,6 +28,8 @@ public class PlayerController : MonoBehaviour
 
     private float verticalVeolocity;
 
+    private PlayerState currentState = PlayerState.Normal;
+
     private void Awake()
     {
         controller = GetComponent<CharacterController>();
@@ -30,7 +38,7 @@ public class PlayerController : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -43,6 +51,31 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
+        ApplyGravity();
+
+        if (currentState != PlayerState.Normal) return;
+
+        HandleMovement(keyboard);
+
+    }
+
+
+    private void ApplyGravity()
+    {
+        if (controller.isGrounded && verticalVeolocity < 0f)
+        {
+            verticalVeolocity = -2f;
+        }
+        else
+        {
+            verticalVeolocity += gravity * Time.deltaTime;
+        }
+
+        controller.Move(Vector3.up * verticalVeolocity * Time.deltaTime);
+    }
+
+    private void HandleMovement(Keyboard keyboard)
+    {
         Vector2 input = Vector2.zero;
 
         if (keyboard.aKey.isPressed)
@@ -61,7 +94,6 @@ public class PlayerController : MonoBehaviour
 
         cameraForward.y = 0;
         cameraRight.y = 0;
-
         cameraForward.Normalize();
         cameraRight.Normalize();
 
@@ -79,17 +111,6 @@ public class PlayerController : MonoBehaviour
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
         }
 
-        if (controller.isGrounded && verticalVeolocity < 0f)
-        {
-            verticalVeolocity = -2f;
-        }
-        else
-        {
-            verticalVeolocity += gravity * Time.deltaTime;
-        }
-
-        controller.Move(Vector3.up * verticalVeolocity * Time.deltaTime);
-
         float animationSpeed = 0f;
 
         if (moveDirection.sqrMagnitude > 0.001f)
@@ -97,6 +118,20 @@ public class PlayerController : MonoBehaviour
             animationSpeed = isRunning ? 1f : 0.5f;
         }
 
-        animator .SetFloat("speed", animationSpeed, 0.1f, Time.deltaTime);
+        animator.SetFloat("speed", animationSpeed, 0.1f, Time.deltaTime);
+    }
+
+    public void ChangeState(PlayerState newState)
+    {
+        currentState = newState;
+
+        if (currentState != PlayerState.Normal)
+        {
+            animator.SetFloat("speed", 0);
+        }
+
+        Debug.Log("현재 상태 : " + currentState);
+
+
     }
 }
