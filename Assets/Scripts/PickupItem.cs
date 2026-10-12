@@ -32,4 +32,8 @@ public class Pickupltem : MonoBehaviour
         Destroy(gameObject);
     }
 
+    public string GetltemName()
+    {
+        return itemName;
+    }
 }
