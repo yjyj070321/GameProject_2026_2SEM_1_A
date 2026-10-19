@@ -17,7 +17,7 @@ public class NPC : MonoBehaviour
 
     public string GetGuideText()
     {
-        return "[E] " + npcName + " 와 대화 하기 ";
+        return "[E] " + npcName + "과 대화 하기 ";
     }
     void Start()
     {
