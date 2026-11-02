@@ -8,14 +8,13 @@ public class Door : MonoBehaviour
 
     [SerializeField] private Quaternion closedRotation;
     [SerializeField] private Quaternion openRoatation;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    
     void Start()
     {
         closedRotation = transform.localRotation;
         openRoatation = closedRotation * Quaternion.Euler(0, openAngle, 0f);
     }
 
-    // Update is called once per frame
     void Update()
     {
         Quaternion targetRotation;

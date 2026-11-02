@@ -5,6 +5,7 @@ public enum PlayerState
 {
     Normal,
     Pickup,
+    inventory
 }
 
 public class PlayerController : MonoBehaviour
@@ -35,13 +36,13 @@ public class PlayerController : MonoBehaviour
         controller = GetComponent<CharacterController>();
     }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    
     void Start()
     {
 
     }
 
-    // Update is called once per frame
+    
     void Update()
     {
         Keyboard keyboard = Keyboard.current;
@@ -131,7 +132,9 @@ public class PlayerController : MonoBehaviour
         }
 
         Debug.Log("현재 상태 : " + currentState);
-
-
+    }
+    public bool IsNormalState()
+    {
+        return currentState == PlayerState.Normal;
     }
 }

@@ -50,16 +50,16 @@ public class QuestManager : MonoBehaviour
             questText.text =
                 currentQuest.questName + "\n" +
                 currentQuest.targetltemName + " " +
-                currentQuest.currentAmount +"/"+
+                currentQuest.currentAmount + "/ " +
                 currentQuest.targetAmount;
         }
         else if (currentQuest.state == QuestState.ReadyToComplete)
         {
-            questText.text = "수집 완료! ₩nNPC에게 돌아가세요";
+            questText.text = "수집 완료! NPC에게 돌아가세요";
         }
         else if (currentQuest.state == QuestState.Completed)
         {
-            questText.text = currentQuest.questName + "#n7 2";
+            questText.text = currentQuest.questName + "\n퀘스트 완료";
         }
     }
     void StartQuest(Quest newQuest)
