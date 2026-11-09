@@ -2,11 +2,19 @@ using System.Runtime.ConstrainedExecution;
 using TMPro;
 using UnityEditor.PackageManager.Requests;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public class QuestManager : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI questText;
     private Quest currentQuest;
+
+    private SimpleInventory inventory;
+
+    private void Awake()
+    {
+        inventory = FindFirstObjectByType<SimpleInventory>();
+    }
 
     void Start()
     {
@@ -65,8 +73,17 @@ public class QuestManager : MonoBehaviour
     void StartQuest(Quest newQuest)
     {
         currentQuest = newQuest;
-        currentQuest.currentAmount = 0;
-        currentQuest.state = QuestState.InProgress;
+        currentQuest.currentAmount = inventory.GetltemAmount(currentQuest.targetltemName);
+
+        if (currentQuest.currentAmount >= currentQuest.targetAmount)
+        {
+            currentQuest.currentAmount = currentQuest.targetAmount;
+            currentQuest.state = QuestState.ReadyToComplete;
+        }
+        else
+        {
+            currentQuest.state = QuestState.InProgress;
+        }
 
         Debug.Log(currentQuest.questName + "퀘스트 시작!");
         UpdateQuestText();
@@ -91,9 +108,13 @@ public class QuestManager : MonoBehaviour
 
     public void CompleteQuest()
     {
+        if (inventory.RemoveItem(currentQuest.targetltemName, currentQuest.targetAmount) == false)
+        {
+            Debug.Log("퀘스트 아이템이 부족합니다.");
+            return;
+        }
         currentQuest.state = QuestState.Completed;
         Debug.Log(currentQuest.questName + "퀘스트 완료!");
         UpdateQuestText();
     }
-
 }
